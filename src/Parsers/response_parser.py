@@ -1,24 +1,27 @@
 import json
-import xml.etree.ElementTree as ET
-
+import re
 
 class ResponseParser:
     def __init__(self, response_str):
         self.response_str = response_str
 
     def _parse_response(self):
-        try:
-            root = ET.fromstring(self.response_str)
-            response_json_str = root.find('response').text.strip()
-            return json.loads(response_json_str)
-        except ET.ParseError as e:
-            print(f"Error parsing XML: {e}")
-            return None
-        except json.JSONDecodeError as e:
-            print(f"Error decoding JSON: {e}")
+        """Helper method to extract JSON content using regex."""
+        # Regular expression to extract the JSON part from the response
+        json_match = re.search(r'<response>(.*?)</response>', self.response_str, re.DOTALL)
+        if json_match:
+            json_content = json_match.group(1).strip()
+            try:
+                return json.loads(json_content)
+            except json.JSONDecodeError as e:
+                print(f"Error decoding JSON: {e}")
+                return None
+        else:
+            print("No valid JSON content found in the response.")
             return None
 
     def parse_instagram_post(self):
+        """Parse the response for an Instagram post."""
         response_json = self._parse_response()
         if response_json:
             return {
@@ -28,6 +31,7 @@ class ResponseParser:
         return None
 
     def parse_linkedin_post(self):
+        """Parse the response for a LinkedIn post."""
         response_json = self._parse_response()
         if response_json:
             return {
@@ -37,6 +41,7 @@ class ResponseParser:
         return None
 
     def parse_email_template(self):
+        """Parse the response for an email template."""
         response_json = self._parse_response()
         if response_json:
             return {
@@ -46,4 +51,3 @@ class ResponseParser:
         return None
 
 
-# Example usage (to be removed in production)

@@ -18,7 +18,7 @@ def generate_strategy(product_name, product_description, product_category, produ
 
     messages = [
         {"role": "system", "content":final_prompt},
-        {"role": "user", "content": "help me generate a Instagram Post for my Product"}
+        {"role": "user", "content": "help me generate a Email Template for my Product"}
     ]
 
     response = openai.ChatCompletion.create(
