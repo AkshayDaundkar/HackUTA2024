@@ -1,16 +1,35 @@
-# database.py
-from pymongo import MongoClient
-from config import MONGO_URI
+from pathlib import Path
+from pymongo import MongoClient, DESCENDING
+import certifi
+from config.config import DATABASE_INFO, ROOT_PATH
 
-# MongoDB connection
-client = MongoClient(MONGO_URI)
-db = client['market_strategy_db']
-prompts_collection = db['prompts']
+url = f'mongodb+srv://{DATABASE_INFO["db_username"]}:{DATABASE_INFO["db_password"]}@cluster0.v6ud2.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'
 
-def save_prompt(prompt_data):
-    # Save prompt data to MongoDB
-    prompts_collection.insert_one(prompt_data)
+class MongoDBData:
+    def __init__(self, db_name, collection_name):
+        self.prompt_file = Path(ROOT_PATH, 'config/prompt.xml')
+        client = MongoClient(url, tlsCAFile=certifi.where())
+        self.collection = self.get_collection(client, db_name, collection_name)
 
-def get_all_prompts():
-    # Retrieve all prompts from MongoDB
-    return list(prompts_collection.find())
+    @staticmethod
+    def get_collection(client, db_name, collection_name):
+        return client[db_name][collection_name]
+    
+    def set_prompt_data(self):
+        with open(self.prompt_file, 'r') as f:
+            post_prompt_data = f.read()
+            self.collection.insert_one({
+                'prompt': post_prompt_data,
+            })
+
+    def get_prompt_data(self, query = {}):
+        doc_count = self.collection.count_documents(query)
+        assert doc_count > 0, "No prompt data found in the database."
+        last_doc = self.collection.find(query).sort([('_id', DESCENDING)]).limit(1)[0]
+        assert 'prompt' in last_doc.keys(), "Prompt data not found."
+        return last_doc['prompt']
+
+if __name__ == '__main__':
+    db = MongoDBData('prompt_db', 'input_prompt')
+    # db.set_prompt_data()
+    print(db.get_prompt_data())
