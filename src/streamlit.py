@@ -252,9 +252,6 @@ if col8.button("Generate Analysis"):
             'content': persona_result
         })
 
-        st.write("## Generated User Persona:")
-        st.write(persona_result)
-
         try:
             persona_result = json.loads(persona_result)  # Convert string to dictionary
         except json.JSONDecodeError:
