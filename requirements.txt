@@ -1,7 +1,11 @@
 -e .
 pandas==1.5.3
 numpy==1.24.2
-openai==1.23.6
+openai~=1.51.2
 langchain==0.1.16
 python-dotenv==1.0.1
 streamlit==1.33.0
+llm~=0.16
+requests~=2.32.3
+certifi~=2024.8.30
+pymongo~=4.10.1
