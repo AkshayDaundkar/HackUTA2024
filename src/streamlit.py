@@ -223,9 +223,9 @@ if col8.button("Generate Analysis"):
 
                 # Display each part of the response in a structured manner
                 if 'action' in parsed_result:
-                    st.write(f'<span class="highlight-text">Action</span>: {parsed_result['action']}', unsafe_allow_html=True)
+                    st.write(f'<span class="highlight-text">Action</span>: {parsed_result["action"]}', unsafe_allow_html=True)
                 if 'response' in parsed_result:
-                    st.write(f'<span class="highlight-text">Response</span>: {parsed_result['response']}', unsafe_allow_html=True)
+                    st.write(f'<span class="highlight-text">Response</span>: {parsed_result["response"]}', unsafe_allow_html=True)
             
         st.image("https://miro.medium.com/v2/resize:fit:1400/1*GugoFZUldUF6RncoKt_4Bw.png", caption="This is a AI generated image.",
                  use_column_width=True)
