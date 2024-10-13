@@ -8,11 +8,52 @@ from database import MongoDBData
 import openai
 from dotenv import load_dotenv
 
+from Prompts.promptss import *
+
 load_dotenv()  # take environment variables from .env
 
 openai.api_key = OPENAI_API_KEY
 db = MongoDBData('prompt_db', 'input_prompt')
-llm = LLM(db)
+
+
+def generate_strategy(product_name, product_description, product_category, product_stage, target_audience, region,
+                      product_pricing,unique_selling_point,marketing_goals,budget_range):
+    # test_prompt = db.get_prompt_data()
+    test_prompt=linkedin_post_creation_prompt
+
+    # print(test_prompt)
+
+    final_prompt = test_prompt.format(
+        Product_Name=product_name,
+        Product_Description=product_description,
+        Product_Category=product_category,
+        Product_Stage=product_stage,
+        Audience=target_audience,
+        Region=region,
+        Pricing=product_pricing,
+        Unique_Selling_Points = unique_selling_point,
+        Marketing_Goals = marketing_goals,
+        Budget_Range = budget_range
+    )
+
+    print("final prommpt:", final_prompt)
+
+    messages = [
+        {"role": "system", "content": final_prompt},
+        {"role": "user", "content": "help me generate a Instagram Post for my Product"}
+    ]
+
+    response = openai.ChatCompletion.create(
+        model="gpt-4",
+        messages=messages,
+        max_tokens=1500
+    )
+
+    # Return the response content
+    return response['choices'][0]['message']['content']
+
+
+
 
 # Streamlit app title and description
 st.title("Marketing Strategy Generator")
@@ -26,18 +67,24 @@ product_stage = st.selectbox("Product Stage", ["Launch", "Growth", "Maturity", "
 target_audience = st.text_area("Target Audience", "Teenagers aged 13-19, fashion-conscious, interested in streetwear.")
 region = st.text_input("Region", "Texas")
 product_pricing = st.text_input("Product Pricing", "Mid-range to high-end")
+unique_selling_point = st.text_input("Unique Selling Point", "Trendy and customizable designs.")
+marketing_goals = st.text_input("Marketing Goals", "Increase brand awareness and sales.")
+budget_range = st.text_input("Budget Range", "1000-5000")
 
 # Button to generate the marketing strategy
 if st.button("Generate Marketing Strategy"):
     # Call the strategy generation function
-    result = llm.generate_strategy(
+    result = generate_strategy(
         product_name,
         product_description,
         product_category,
         product_stage,
         target_audience,
         region,
-        product_pricing
+        product_pricing,
+        unique_selling_point,
+        marketing_goals,
+        budget_range
     )
 
     # Clean the result to avoid control characters
