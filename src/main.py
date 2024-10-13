@@ -1,4 +1,5 @@
 import streamlit as st
+from LLM.llm import LLM
 from Parsers.response_parser import ResponseParser
 import re
 
@@ -11,39 +12,7 @@ load_dotenv()  # take environment variables from .env
 
 openai.api_key = OPENAI_API_KEY
 db = MongoDBData('prompt_db', 'input_prompt')
-
-
-def generate_strategy(product_name, product_description, product_category, product_stage, target_audience, region,
-                      product_pricing):
-    test_prompt = db.get_prompt_data()
-    # print(test_prompt)
-
-    final_prompt = test_prompt.format(
-        Product_Name=product_name,
-        Product_Description=product_description,
-        Product_Category=product_category,
-        Product_Stage=product_stage,
-        Audience=target_audience,
-        Region=region,
-        Pricing=product_pricing
-    )
-
-    messages = [
-        {"role": "system", "content": final_prompt},
-        {"role": "user", "content": "help me generate a Instagram Post for my Product"}
-    ]
-
-    response = openai.ChatCompletion.create(
-        model="gpt-4",
-        messages=messages,
-        max_tokens=1500
-    )
-
-    # Return the response content
-    return response['choices'][0]['message']['content']
-
-
-
+llm = LLM(db)
 
 # Streamlit app title and description
 st.title("Marketing Strategy Generator")
@@ -61,7 +30,7 @@ product_pricing = st.text_input("Product Pricing", "Mid-range to high-end")
 # Button to generate the marketing strategy
 if st.button("Generate Marketing Strategy"):
     # Call the strategy generation function
-    result = generate_strategy(
+    result = llm.generate_strategy(
         product_name,
         product_description,
         product_category,
@@ -97,7 +66,4 @@ if st.button("Generate Marketing Strategy"):
         st.subheader("Email Template:")
         st.write(f"**Action**: {parsed_email['action']}")
         st.write(parsed_email['content'])
-
-
-# if __name__=="__main__":
 
