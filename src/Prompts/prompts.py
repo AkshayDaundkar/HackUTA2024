@@ -80,7 +80,7 @@ post_creation_prompt = """
         <!-- Detailed Strategy Development Prompt -->
 		<action name="DETAILED_STRATEGY_DEVELOPMENT">
 			<rules>
-				<rule>1. Use the provided budget of {BudgetRange} and target audience {Audience} in {Region} to develop a comprehensive marketing strategy.</rule>
+				<rule>1. Use the provided budget of {Budget_Range} and target audience {Audience} in {Region} to develop a comprehensive marketing strategy.</rule>
 				<rule>2. Include recommended marketing channels (online, offline, mixed) with rationale for each channel's effectiveness.</rule>
 				<rule>3. Identify potential partnerships or local influencers that could enhance campaign reach.</rule>
 				<rule>4. Consider region-specific consumer behavior that may impact marketing effectiveness.</rule>
@@ -98,7 +98,7 @@ post_creation_prompt = """
         <!-- Digital Marketing Focus Prompt -->
 		<action name="DIGITAL_MARKETING_FOCUS">
 			<rules>
-				<rule>1. Tailor the digital marketing focus for a product aimed at {Audience} in {Region} within a budget of {BudgetRange}.</rule>
+				<rule>1. Tailor the digital marketing focus for a product aimed at {Audience} in {Region} within a budget of {Budget_Range}.</rule>
 				<rule>2. Outline suitable digital marketing tactics based on regional demographics.</rule>
 				<rule>3. Suggest appropriate platforms (social media, search engines, email) and content types (videos, blogs, ads) for the campaign.</rule>
 				<rule>4. Provide ideas for digital campaigns, including themes and key messages to resonate with the audience.</rule>
@@ -114,7 +114,7 @@ post_creation_prompt = """
         <!-- Regional Specifics and Cultural Considerations Prompt -->
 		<action name="REGIONAL_SPECIFICS_CULTURAL_CONSIDERATIONS">
 			<rules>
-				<rule>1. Elaborate on the cultural nuances and economic conditions of {Region} affecting the marketing strategy for {ProductName}.</rule>
+				<rule>1. Elaborate on the cultural nuances and economic conditions of {Region} affecting the marketing strategy for {Product_Name}.</rule>
 				<rule>2. Identify cultural do's and don'ts in advertising to avoid potential pitfalls.</rule>
 				<rule>3. Highlight popular media channels and their reach among different segments of {Audience} in the region.</rule>
 				<rule>4. Mention local holidays, events, or traditions that could be integrated into the marketing strategy.</rule>
