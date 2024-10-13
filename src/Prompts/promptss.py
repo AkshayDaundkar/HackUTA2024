@@ -245,3 +245,28 @@ digital_marketing_focus_prompt="""
 	</restrictions>
 </instructions>
 """
+
+
+generate_user_persona="""
+Generate a persona for marketing a {product_category} based on the following
+    {{
+      "gender": "{gender}",
+      "country": "{country}",
+      "age": "{age}",
+      "comments": "{comments}"
+    }}
+
+    Our product's description is : {product_description}
+
+    Each key of the following json should contain at least 3 sentences.THe keys are as follows:
+    {{
+    "Name":
+    "The struggles and pains of the persona":
+    "The other products the persona thinks about":
+    "The goals of the persona":
+    "The benefits of our product for the persona:"
+    "Marketing tagline for the persona":
+    }}
+
+    Do not add any other information.
+"""

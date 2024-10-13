@@ -5,16 +5,17 @@ from config import OPENAI_API_KEY
 from database import MongoDBData
 import openai
 from dotenv import load_dotenv
-from Prompts.promptss import linkedin_post_creation_prompt,instagram_post_creation_prompt,email_template_prompt,channel_investment_guidance_prompt,detailed_stategy_development_prompt,digital_marketing_focus_prompt
+from Prompts.promptss import linkedin_post_creation_prompt, instagram_post_creation_prompt, email_template_prompt, \
+    channel_investment_guidance_prompt, detailed_stategy_development_prompt, digital_marketing_focus_prompt, \
+    generate_user_persona
 
 load_dotenv()  # Load environment variables
 openai.api_key = OPENAI_API_KEY
 # db = MongoDBData('prompt_db', 'input_prompt')
 
-
 # Function to generate marketing strategies
 def generate_strategy(product_name, product_description, product_category, product_stage, target_audience, region,
-                      product_pricing, unique_selling_point, marketing_goals, budget_range, prompts):
+                      product_pricing, unique_selling_point, marketing_goals, budget_range, prompts,persona_attributes):
     results = {}
 
     for prompt in prompts:
@@ -29,9 +30,10 @@ def generate_strategy(product_name, product_description, product_category, produ
             test_prompt=channel_investment_guidance_prompt
         elif prompt=="detailed_stategy_development_prompt":
             test_prompt=detailed_stategy_development_prompt
-        else:
+        elif prompt=="digital_marketing_focus_prompt":
             test_prompt = digital_marketing_focus_prompt
-
+        else:
+            test_prompt = generate_user_persona
 
         final_prompt = test_prompt.format(
             Product_Name=product_name,
@@ -81,8 +83,83 @@ unique_selling_point = st.text_input("Unique Selling Point", "Trendy and customi
 marketing_goals = st.text_input("Marketing Goals", "Increase brand awareness and sales.")
 budget_range = st.text_input("Budget Range", "1000-5000")
 
+
+st.write("### Persona Details")
+persona_gender = st.selectbox("Gender", ["Male", "Female", "Other"], index=0)
+persona_country = st.text_input("Country", "USA")
+persona_age = st.text_input("Age", "25")
+persona_comments = st.text_area("Additional Comments", "The persona is tech-savvy and highly engaged on social media.")
+
+# Combine persona attributes into a dictionary
+persona_attributes = {
+    "gender": persona_gender,
+    "country": persona_country,
+    "age": persona_age,
+    "comments": persona_comments,
+    "product_category":product_category,
+    "product_description":product_description
+}
+
+
 # Checkbox to select prompts
-st.write("Select the actions you want to include:")
+# st.write("Select the actions you want to include:")
+# selected_prompts = st.multiselect(
+#     "Choose the marketing strategies to generate:",
+#     options=["linkedin_post_creation_prompt", "instagram_post_creation_prompt", "email_template_prompt",
+#              "channel_investment_guidance_prompt", "detailed_stategy_development_prompt",
+#              "digital_marketing_focus_prompt"],
+#     default=["linkedin_post_creation_prompt", "instagram_post_creation_prompt", "email_template_prompt"]
+# )
+#
+# # Generate button
+# if st.button("Generate Marketing Strategy"):
+#     # If no specific prompts are selected, run all
+#     if not selected_prompts:
+#         selected_prompts = [
+#             linkedin_post_creation_prompt,
+#             instagram_post_creation_prompt,
+#             email_template_prompt,
+#             channel_investment_guidance_prompt,
+#             detailed_stategy_development_prompt,
+#             digital_marketing_focus_prompt
+#         ]
+#
+#     # Generate strategies based on the selected prompts
+#     print(selected_prompts)
+#     results = generate_strategy(product_name, product_description, product_category, product_stage,
+#                                 target_audience, region, product_pricing, unique_selling_point,
+#                                 marketing_goals, budget_range, selected_prompts,persona_attributes)
+#
+#     st.write(results)
+#     st.write("## Generated Marketing Strategies:")
+#     for prompt, result in results.items():
+#         result = re.sub(r'[\x00-\x1F\x7F]', '', result)
+#
+#         # Step 2: Remove leading/trailing tags if they are not part of the JSON (e.g., <response> tags)
+#         # Use regex to extract JSON part
+#         json_part = re.search(r'\{.*\}', result)
+#         if json_part:
+#             result = json_part.group(0)
+#
+#         st.subheader(f"Strategy for {prompt.replace('_', ' ').title()}:")
+#         parsed_result = eval(result)  # Assuming result is a JSON-like string
+#
+#         # Display each part of the response in a structured manner
+#         if 'action' in parsed_result:
+#             st.write(f"**Action**: {parsed_result['action']}")
+#         if 'response' in parsed_result:
+#             st.write(f"**Response**: {parsed_result['response']}")
+#         st.write("---")
+#
+
+st.write("### Select the action you want to include:")
+action_choice = st.selectbox(
+    "Choose the action:",
+    options=["Generate Marketing Strategies", "Generate User Persona"]
+)
+
+# Checkbox to select prompts
+st.write("Select the strategies you want to generate:")
 selected_prompts = st.multiselect(
     "Choose the marketing strategies to generate:",
     options=["linkedin_post_creation_prompt", "instagram_post_creation_prompt", "email_template_prompt",
@@ -92,52 +169,75 @@ selected_prompts = st.multiselect(
 )
 
 # Generate button
-if st.button("Generate Marketing Strategy"):
-    # If no specific prompts are selected, run all
-    if not selected_prompts:
-        selected_prompts = [
-            linkedin_post_creation_prompt,
-            instagram_post_creation_prompt,
-            email_template_prompt,
-            channel_investment_guidance_prompt,
-            detailed_stategy_development_prompt,
-            digital_marketing_focus_prompt
+if st.button("Generate"):
+    if action_choice == "Generate Marketing Strategies":
+        if not selected_prompts:
+            selected_prompts = [
+                "linkedin_post_creation_prompt",
+                "instagram_post_creation_prompt",
+                "email_template_prompt",
+                "channel_investment_guidance_prompt",
+                "detailed_stategy_development_prompt",
+                "digital_marketing_focus_prompt"
+            ]
+
+        results = generate_strategy(product_name, product_description, product_category, product_stage,
+                                    target_audience, region, product_pricing, unique_selling_point,
+                                    marketing_goals, budget_range, selected_prompts, persona_attributes)
+
+        st.write("## Generated Marketing Strategies:")
+        for prompt, result in results.items():
+            result = re.sub(r'[\x00-\x1F\x7F]', '', result)
+
+            # Remove leading/trailing tags
+            json_part = re.search(r'\{.*\}', result)
+            if json_part:
+                result = json_part.group(0)
+
+            st.subheader(f"Strategy for {prompt.replace('_', ' ').title()}:")
+            parsed_result = eval(result)  # Assuming result is a JSON-like string
+
+            # Display each part of the response
+            if 'action' in parsed_result:
+                st.write(f"**Action**: {parsed_result['action']}")
+            if 'response' in parsed_result:
+                st.write(f"**Response**: {parsed_result['response']}")
+            st.write("---")
+
+    elif action_choice == "Generate User Persona":
+        # Generate persona using the selected persona attributes
+        persona_prompt = generate_user_persona.format(**persona_attributes)
+
+        messages = [
+            {"role": "system", "content": persona_prompt},
+            {"role": "user", "content": "Generate a user persona"}
         ]
 
-    # Generate strategies based on the selected prompts
-    print(selected_prompts)
-    results = generate_strategy(product_name, product_description, product_category, product_stage,
-                                target_audience, region, product_pricing, unique_selling_point,
-                                marketing_goals, budget_range, selected_prompts)
+        response = openai.ChatCompletion.create(
+            model="gpt-4",
+            messages=messages,
+            max_tokens=1500
+        )
 
-    # Parse the results
-    st.write(results)
-    # # result = re.sub(r'[\x00-\x1F\x7F]', '', results)
-    # parser = ResponseParser(results)
-    # parsed_instagram = parser.parse_instagram_post()
-    # parsed_linkedin = parser.parse_linkedin_post()
-    # parsed_email = parser.parse_email_template()
-    #
-    # # Display the generated marketing strategies
-    # st.write("## Generated Marketing Strategy:")
-    #
-    # if parsed_instagram:
-    #     st.subheader("Instagram Post:")
-    #     st.write(f"**Action**: {parsed_instagram['action']}")
-    #     st.write(parsed_instagram['content'])
+        persona_result = re.sub(r'[\x00-\x1F\x7F]', '', response['choices'][0]['message']['content'])
+        st.write("## Generated User Persona:")
+        st.write(persona_result)
 
-    # for prompt, result in results.items():
-    #     if "INSTAGRAM_POST" in prompt:
-    #         parsed_results['Instagram'] = parser.parse_instagram_post(result)
-    #     elif "LINKED_IN_POST" in prompt:
-    #         parsed_results['LinkedIn'] = parser.parse_linkedin_post(result)
-    #     elif "EMAIL_TEMPLATE" in prompt:
-    #         parsed_results['Email'] = parser.parse_email_template(result)
-    #
-    # # Display the generated marketing strategies
-    # st.write("## Generated Marketing Strategy:")
-    # for platform, parsed in parsed_results.items():
-    #     if parsed:
-    #         st.subheader(f"{platform} Post:")
-    #         st.write(f"**Action**: {parsed['action']}")
-    #         st.write(parsed['content'])
+st.markdown("""
+    <style>
+    footer {
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        background-color: #333;
+        color: white;
+        text-align: center;
+        padding: 10px;
+    }
+    </style>
+
+    <footer>
+        <p>© 2024 Marketing Genius App - All Rights Reserved</p>
+    </footer>
+    """, unsafe_allow_html=True)
