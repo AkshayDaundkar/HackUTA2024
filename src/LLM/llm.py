@@ -37,11 +37,11 @@ def generate_strategy(product_name, product_description, product_category, produ
         {"role": "user", "content": "help me generate a Channel Investment Guidelines for my Product"}
     ]
 
-        response = openai.ChatCompletion.create(
-            model="gpt-4",
-            messages=messages,
-            max_tokens=1500
-        )
+    response = openai.ChatCompletion.create(
+        model="gpt-4",
+        messages=messages,
+        max_tokens=1500
+    )
 
-        # Return the response content
-        return response['choices'][0]['message']['content']
+    # Return the response content
+    return response['choices'][0]['message']['content']
