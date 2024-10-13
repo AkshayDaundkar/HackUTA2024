@@ -13,7 +13,6 @@ load_dotenv()  # Load environment variables
 openai.api_key = OPENAI_API_KEY
 # db = MongoDBData('prompt_db', 'input_prompt')
 
-
 # Function to generate marketing strategies
 def generate_strategy(product_name, product_description, product_category, product_stage, target_audience, region,
                       product_pricing, unique_selling_point, marketing_goals, budget_range, prompts,persona_attributes):
@@ -223,3 +222,22 @@ if st.button("Generate"):
         persona_result = re.sub(r'[\x00-\x1F\x7F]', '', response['choices'][0]['message']['content'])
         st.write("## Generated User Persona:")
         st.write(persona_result)
+
+st.markdown("""
+    <style>
+    footer {
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        background-color: #333;
+        color: white;
+        text-align: center;
+        padding: 10px;
+    }
+    </style>
+
+    <footer>
+        <p>© 2024 Marketing Genius App - All Rights Reserved</p>
+    </footer>
+    """, unsafe_allow_html=True)
