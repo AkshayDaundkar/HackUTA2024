@@ -2,6 +2,7 @@ from datetime import datetime
 
 import streamlit as st
 from pathlib import Path
+import json
 from Parsers.response_parser import ResponseParser
 import re
 from config import OPENAI_API_KEY, ROOT_PATH
@@ -253,6 +254,37 @@ if col8.button("Generate Analysis"):
 
         st.write("## Generated User Persona:")
         st.write(persona_result)
+
+        try:
+            persona_result = json.loads(persona_result)  # Convert string to dictionary
+        except json.JSONDecodeError:
+            st.error("Error parsing the persona result. Please ensure it's in valid JSON format.")
+            persona_result = {}
+
+        # Append to session history if the result is valid
+        if persona_result:
+            st.session_state['generated_history'].append({
+                'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                'content': persona_result
+            })
+
+            # Display persona result
+            st.write("## Generated User Persona:")
+            st.write(persona_result)
+
+            # Emojis for different sections
+            emojis = ["✅", "🤔", "🎯", "🚀", "💡", "🔖"]
+
+            # Iterate over the persona result and display with corresponding emojis
+            for i, (key, value) in enumerate(persona_result.items()):
+                if key != "Other options":  # Assuming you may have other options later
+                    st.write(f"{emojis[i]} **{key}**:")
+                    with st.expander(f"View details for {key}", expanded=False):
+                        st.write(value)
+                else:
+                    # Handle "Other options" if needed
+                    st.write(f"{emojis[-1]} **{key}**:")
+                    st.write(persona_result[key])
 
 st.markdown("""
     <style>
