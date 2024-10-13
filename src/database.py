@@ -1,11 +1,7 @@
 from pathlib import Path
-from pymongo import MongoClient, DESCENDING
 import certifi
-ROOT_PATH = Path(__file__).parent.parent
-DATABASE_INFO = {
-  'db_username': 'hackuta',
-  'db_password': 'hello12345'
-}
+from pymongo import MongoClient, DESCENDING
+from config import DATABASE_INFO, ROOT_PATH
 
 url = f'mongodb+srv://{DATABASE_INFO["db_username"]}:{DATABASE_INFO["db_password"]}@cluster0.v6ud2.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'
 

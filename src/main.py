@@ -1,4 +1,5 @@
 import streamlit as st
+from LLM.llm import LLM
 from Parsers.response_parser import ResponseParser
 import re
 
@@ -112,7 +113,4 @@ if st.button("Generate Marketing Strategy"):
         st.subheader("Email Template:")
         st.write(f"**Action**: {parsed_email['action']}")
         st.write(parsed_email['content'])
-
-
-# if __name__=="__main__":
 
