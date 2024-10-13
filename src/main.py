@@ -14,7 +14,7 @@ db = MongoDBData('prompt_db', 'input_prompt')
 
 
 def generate_strategy(product_name, product_description, product_category, product_stage, target_audience, region,
-                      product_pricing):
+                      product_pricing,unique_selling_point,marketing_goals,budget_range):
     test_prompt = db.get_prompt_data()
     # print(test_prompt)
 
@@ -25,7 +25,10 @@ def generate_strategy(product_name, product_description, product_category, produ
         Product_Stage=product_stage,
         Audience=target_audience,
         Region=region,
-        Pricing=product_pricing
+        Pricing=product_pricing,
+        Unique_Selling_Points = unique_selling_point,
+        Marketing_Goals = marketing_goals,
+        Budget_Range = budget_range
     )
 
     messages = [

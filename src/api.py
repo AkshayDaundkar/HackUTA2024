@@ -10,6 +10,9 @@ if __name__ == "__main__":
     target_audience = "Teenagers aged 13-19, fashion-conscious, interested in streetwear, and looking for bold, statement shoes that reflect their unique personalities."
     region = "Texas"
     product_pricing = "Mid-range to high-end"
+    unique_selling_point = "No competition in market right now"
+    marketing_goals = "To sell 1000 pieces per day"
+    budget_range = "20 USD"
 
     result = generate_strategy(
         product_name,
@@ -18,7 +21,10 @@ if __name__ == "__main__":
         product_stage,
         target_audience,
         region,
-        product_pricing
+        product_pricing,
+        unique_selling_point,
+        marketing_goals,
+        budget_range
     )
 
     print("Generated Market Strategy:")
@@ -29,7 +35,7 @@ if __name__ == "__main__":
     parser = ResponseParser(result)
     # parsed_linked_post= parser.parse_linkedin_post()
     #parsed_instagram_post = parser.parse_instagram_post()
-    parsed_email = parser.parse_email_template()
+    parsed_email = parser.parse_linkedin_post()
 
 
     if parsed_email:
