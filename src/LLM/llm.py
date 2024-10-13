@@ -1,12 +1,18 @@
 # llm.py
 import openai
-from config import OPENAI_API_KEY
+from src.config import OPENAI_API_KEY
 from src.Prompts.prompts import post_creation_prompt
+from src.database import MongoDBData
 
 openai.api_key = OPENAI_API_KEY
+db = MongoDBData('prompt_db', 'input_prompt')
 
 def generate_strategy(product_name, product_description, product_category, product_stage, target_audience, region, product_pricing):
-    final_prompt = post_creation_prompt.format(
+
+    test_prompt=db.get_prompt_data()
+    # print(test_prompt)
+
+    final_prompt = test_prompt.format(
         Product_Name=product_name,
         Product_Description=product_description,
         Product_Category=product_category,
