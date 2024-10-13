@@ -1,10 +1,10 @@
 from datetime import datetime
 
 import streamlit as st
-
+from pathlib import Path
 from Parsers.response_parser import ResponseParser
 import re
-from config import OPENAI_API_KEY
+from config import OPENAI_API_KEY, ROOT_PATH
 from database import MongoDBData
 import openai
 from dotenv import load_dotenv
@@ -73,28 +73,14 @@ def generate_strategy(product_name, product_description, product_category, produ
     return results
 
 
+def local_css(file_name):
+    with open(file_name) as f:
+        st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
 
-st.markdown(
-    """
-    <style>
-    h1 {
-        color: #b7c439; /* Tomato */
-        text-align: center;
-    }
-    h2 {
-        color: #b7c439; /* SteelBlue */
-        text-align: center;
-    }
-    h3 {
-        color: #b7c439; /* SeaGreen */
-        text-align: center;
-    }
-    </style>
-    """, unsafe_allow_html=True
-)
+local_css(Path(ROOT_PATH, 'src/css/style.css'))
 
 # Sidebar with logo
-st.sidebar.image("logo.png", use_column_width=True)
+st.sidebar.image("src/logo.png", use_column_width=True)
 st.sidebar.title("Marketing Strategy Generator")
 
 # History sidebar
@@ -109,26 +95,63 @@ else:
 
 # Streamlit app title and description
 st.title("Marketing Strategy Generator")
-st.write("Generate marketing strategies for different platforms (Instagram, LinkedIn, Email) based on product details.")
+st.write('<p class="title-subtext">Generate marketing strategies for different platforms (Instagram, LinkedIn, Email) based on product details.</p><hr>', unsafe_allow_html=True)
 
 # Input fields for product details
-product_name = st.text_input("Product Name", "TexSneaks")
-product_description = st.text_area("Product Description",
-                                   "TexSneaks offers trendy, high-quality, and eye-catching sneakers that are perfect for fashion-forward teenagers.")
-product_category = st.text_input("Product Category", "Shoes")
-product_stage = st.selectbox("Product Stage", ["Launch", "Growth", "Maturity", "Decline"], index=0)
-target_audience = st.text_area("Target Audience", "Teenagers aged 13-19, fashion-conscious, interested in streetwear.")
-region = st.text_input("Region", "Texas")
-product_pricing = st.text_input("Product Pricing", "Mid-range to high-end")
-unique_selling_point = st.text_input("Unique Selling Point", "Trendy and customizable designs.")
-marketing_goals = st.text_input("Marketing Goals", "Increase brand awareness and sales.")
-budget_range = st.text_input("Budget Range", "1000-5000")
+col1, col2 = st.columns(2)
 
+with col1:
+    product_name = st.text_input("Product Name", "TexSneaks", placeholder="Product Name")
+    st.write('<p class="input-example">Eg. TexSneaks</p>', unsafe_allow_html=True)
+
+    product_category = st.text_input("Product Category", "Shoes", placeholder="Product Category")
+    st.write('<p class="input-example">Eg. Shoes</p>', unsafe_allow_html=True)
+
+    product_stage = st.selectbox("Product Stage", ["Launch", "Growth", "Maturity", "Decline"], index=0)
+    st.write('<p class="input-example">Choose an option</p>', unsafe_allow_html=True)
+
+with col2:
+    product_description = st.text_area("Product Description",
+                                "TexSneaks offers trendy, high-quality, and eye-catching sneakers that are perfect for fashion-forward teenagers.",
+                                height=290)
+    
+target_audience = st.text_area("Target Audience", "Teenagers aged 13-19, fashion-conscious, interested in streetwear.")
+
+col3, col4 = st.columns(2)
+
+with col3:
+    region = st.text_input("Region", "Texas")
+    st.write('<p class="input-example">Eg. Texas</p>', unsafe_allow_html=True)
+
+    product_pricing = st.text_input("Product Pricing", "Mid-range to high-end")
+    st.write('<p class="input-example">Eg. Mid-range to high-end</p>', unsafe_allow_html=True)
+
+with col4:
+    marketing_goals = st.text_input("Marketing Goals", "Increase brand awareness and sales.")
+    st.write('<p class="input-example">Eg. Increase brand awareness and sales</p>', unsafe_allow_html=True)
+
+    budget_range = st.text_input("Budget Range", "1000-5000")
+    st.write('<p class="input-example">Eg. 1000-5000</p>', unsafe_allow_html=True)
+
+unique_selling_point = st.text_input("Unique Selling Point", "Trendy and customizable designs.")
+st.write('<p class="input-example">Eg. Trendy and customizable designs</p><hr>', unsafe_allow_html=True)
 
 st.write("### Persona Details")
-persona_gender = st.selectbox("Gender", ["Male", "Female", "Other"], index=0)
-persona_country = st.text_input("Country", "USA")
+
+# Input fields for product details
+col6, col7 = st.columns(2)
+
+with col6:
+    persona_gender = st.selectbox("Gender", ["Male", "Female", "Other"], index=0)
+    st.write('<p class="input-example">Eg. Male</p>', unsafe_allow_html=True)
+
+with col7:
+    persona_country = st.text_input("Country", "USA")
+    st.write('<p class="input-example">Eg. USA</p>', unsafe_allow_html=True)
+    
 persona_age = st.text_input("Age", "25")
+st.write('<p class="input-example">Eg. 25</p>', unsafe_allow_html=True)
+
 persona_comments = st.text_area("Additional Comments", "The persona is tech-savvy and highly engaged on social media.")
 
 # Combine persona attributes into a dictionary
@@ -141,34 +164,39 @@ persona_attributes = {
     "product_description":product_description
 }
 
-st.write("### Select the action you want to include:")
+st.write('<p class="multiselect-pretext">Select all the actions you want to include:</p>', unsafe_allow_html=True)
 action_choice = st.selectbox(
     "Choose the action:",
     options=["Generate Marketing Strategies", "Generate User Persona"]
 )
 
+available_prompts = {
+    'LinkedIn Post': "linkedin_post_creation_prompt",
+    'Instagram Post': "instagram_post_creation_prompt",
+    'Email Template': "email_template_prompt",
+    'Channel Guidance': "channel_investment_guidance_prompt",
+    'Detailed Strategy Development': "detailed_stategy_development_prompt",
+    'Digital Post': "digital_marketing_focus_prompt"
+}
+
 # Checkbox to select prompts
-st.write("Select the strategies you want to generate:")
 selected_prompts = st.multiselect(
     "Choose the marketing strategies to generate:",
-    options=["linkedin_post_creation_prompt", "instagram_post_creation_prompt", "email_template_prompt",
-             "channel_investment_guidance_prompt", "detailed_stategy_development_prompt",
-             "digital_marketing_focus_prompt"],
-    default=["linkedin_post_creation_prompt", "instagram_post_creation_prompt", "email_template_prompt"]
+    options=["LinkedIn Post", "Instagram Post", "Email Template",
+            "Channel Investment Guidance", "Detailed Strategy Development",
+            "Digital Marketing Focus"],
+    default=["LinkedIn Post", "Instagram Post", "Email Template"]
 )
+st.write('<hr class="btn-separator">', unsafe_allow_html=True)
 
 # Generate button
-if st.button("Generate"):
+_, col8, _ = st.columns(3)
+if col8.button("Generate Analysis"):
     if action_choice == "Generate Marketing Strategies":
         if not selected_prompts:
-            selected_prompts = [
-                "linkedin_post_creation_prompt",
-                "instagram_post_creation_prompt",
-                "email_template_prompt",
-                "channel_investment_guidance_prompt",
-                "detailed_stategy_development_prompt",
-                "digital_marketing_focus_prompt"
-            ]
+            selected_prompts = available_prompts.values()
+        else:
+            selected_prompts = [available_prompts[prompt] for prompt in selected_prompts]
 
         results = generate_strategy(product_name, product_description, product_category, product_stage,
                                     target_audience, region, product_pricing, unique_selling_point,
@@ -179,7 +207,7 @@ if st.button("Generate"):
             'content': results
         })
 
-        st.write("## Generated Marketing Strategies:")
+        st.write('<p class="output-title">Generated Marketing Strategies:</p>', unsafe_allow_html=True)
         for prompt, result in results.items():
             result = re.sub(r'[\x00-\x1F\x7F]', '', result)
 
@@ -188,15 +216,15 @@ if st.button("Generate"):
             if json_part:
                 result = json_part.group(0)
 
-            st.subheader(f"Strategy for {prompt.replace('_', ' ').title()}:")
-            parsed_result = eval(result)  # Assuming result is a JSON-like string
+            with st.expander(f"Click to Expand/Collapse details for {prompt.replace('_', ' ').title()}", expanded=False):
+                st.subheader(f"Strategy for {prompt.replace('_', ' ').title()}:")
+                parsed_result = eval(result)  # Assuming result is a JSON-like string
 
-            # Display each part of the response
-            if 'action' in parsed_result:
-                st.write(f"**Action**: {parsed_result['action']}")
-            if 'response' in parsed_result:
-                st.write(parsed_result['response'])
-            st.write("---")
+                # Display each part of the response in a structured manner
+                if 'action' in parsed_result:
+                    st.write(f'<span class="highlight-text">Action</span>: {parsed_result['action']}', unsafe_allow_html=True)
+                if 'response' in parsed_result:
+                    st.write(f'<span class="highlight-text">Response</span>: {parsed_result['response']}', unsafe_allow_html=True)
             
         st.image("https://miro.medium.com/v2/resize:fit:1400/1*GugoFZUldUF6RncoKt_4Bw.png", caption="This is a AI generated image.",
                  use_column_width=True)

@@ -1,0 +1,119 @@
+@import url('https://fonts.googleapis.com/css2?family=Poiret+One&display=swap');
+
+.main-title {
+    color: #e5ccc9;
+    
+    font-size: 42px;
+    text-align: center;
+}
+
+[data-testid='stSidebar'] [data-testid='stHeading'] h1 {
+    color: #e5ccc9;
+    font-family: "Poiret One", sans-serif;
+    font-size: 46px;
+    text-align: center;
+    padding-bottom: 32px;
+}
+
+[data-testid='stHeading'] h1 {
+    color: #b7c439;
+    font-size: 52px;
+    text-align: center;
+    padding-bottom: 32px;
+}
+
+[data-testid='stHeading'] h1 span {
+    display: none;
+}
+
+.title-subtext {
+    color: #ffcca3;
+    font-size: 21px;
+    text-align: center;
+}
+
+.stTextInput p {
+    color: #c6e5ff;
+    font-size: 17px;
+    padding: 4px 0 6px;
+}
+
+.stTextArea p {
+    color: #c6e5ff;
+    font-size: 17px;
+    padding: 4px 0 6px;
+}
+
+.stSelectbox p {
+    color: #c6e5ff;
+    font-size: 17px;
+    padding: 4px 0 6px;
+}
+
+.stMultiSelect p {
+    color: #c6e5ff;
+    font-size: 17px;
+    padding: 4px 0 6px;
+}
+
+.input-example {
+    color: gray;
+    font-size: 14px;
+    margin-top: -10px;
+}
+
+.multiselect-pretext {
+    color: #efe386;
+    font-size: 25px;
+    text-align: center;
+}
+
+.btn-separator {
+    margin: 10px 0 20px;
+}
+
+.output-title {
+    color: #75dada;
+    font-size: 52px;
+    margin-top: 32px;
+}
+
+[data-testid='stHeading'] h3 {
+    color: #efe386;
+}
+
+.highlight-text {
+    color: #7fc5f0;
+    font-weight: 600;
+    font-style: italic;
+}
+
+footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: #333;
+    color: white;
+    text-align: center;
+    padding: 10px;
+    z-index: 10;
+}
+
+footer p {
+    margin: 0.5rem 0;
+}
+
+@media screen and (max-width: 768px) {
+    [data-testid='stHeading'] h1 {
+        font-size: 36px;
+    }
+
+    .title-subtext {
+        font-size: 19px;
+    }
+
+    .output-title {
+        font-size: 36px;
+    }
+}
