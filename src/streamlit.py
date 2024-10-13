@@ -1,4 +1,5 @@
 import streamlit as st
+
 from Parsers.response_parser import ResponseParser
 import re
 from config import OPENAI_API_KEY
@@ -12,6 +13,9 @@ from Prompts.promptss import linkedin_post_creation_prompt, instagram_post_creat
 load_dotenv()  # Load environment variables
 openai.api_key = OPENAI_API_KEY
 # db = MongoDBData('prompt_db', 'input_prompt')
+
+
+
 
 # Function to generate marketing strategies
 def generate_strategy(product_name, product_description, product_category, product_stage, target_audience, region,
@@ -65,6 +69,30 @@ def generate_strategy(product_name, product_description, product_category, produ
         results[prompt] = re.sub(r'[\x00-\x1F\x7F]', '', response['choices'][0]['message']['content'])
     return results
 
+
+
+st.markdown(
+    """
+    <style>
+    h1 {
+        color: #b7c439; /* Tomato */
+        text-align: center;
+    }
+    h2 {
+        color: #b7c439; /* SteelBlue */
+        text-align: center;
+    }
+    h3 {
+        color: #b7c439; /* SeaGreen */
+        text-align: center;
+    }
+    </style>
+    """, unsafe_allow_html=True
+)
+
+# Sidebar with logo
+st.sidebar.image("logo.png", use_column_width=True)
+st.sidebar.title("Marketing Strategy Generator")
 
 # Streamlit app title and description
 st.title("Marketing Strategy Generator")
@@ -201,8 +229,12 @@ if st.button("Generate"):
             if 'action' in parsed_result:
                 st.write(f"**Action**: {parsed_result['action']}")
             if 'response' in parsed_result:
-                st.write(f"**Response**: {parsed_result['response']}")
+                st.write(parsed_result['response'])
             st.write("---")
+            
+        st.image("https://miro.medium.com/v2/resize:fit:1400/1*GugoFZUldUF6RncoKt_4Bw.png", caption="This is a AI generated image.",
+                 use_column_width=True)
+
 
     elif action_choice == "Generate User Persona":
         # Generate persona using the selected persona attributes
@@ -238,6 +270,6 @@ st.markdown("""
     </style>
 
     <footer>
-        <p>© 2024 Marketing Genius App - All Rights Reserved</p>
+        <p>© 2024 MarketIQ - All Rights Reserved</p>
     </footer>
     """, unsafe_allow_html=True)
